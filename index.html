@@ -30,7 +30,7 @@
     </script>
     <style>
         /* Ocultar scrollbar para un look más limpio */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
@@ -40,14 +40,23 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 h-screen flex overflow-hidden">
+<body class="bg-slate-50 text-slate-800 h-screen flex overflow-hidden relative">
 
-    <!-- SIDEBAR (Menú Lateral adaptado a Il Mercato) -->
-    <aside class="w-72 bg-[#111111] text-white flex flex-col transition-all duration-300 shadow-2xl z-20">
+    <!-- BACKDROP PARA MÓVILES (Fondo oscuro al abrir el menú) -->
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/60 z-30 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR (Menú Lateral adaptado a Il Mercato y Responsive) -->
+    <aside id="sidebar" class="w-72 bg-[#111111] text-white flex flex-col transition-transform duration-300 shadow-2xl z-40 fixed h-full md:relative md:translate-x-0 -translate-x-full">
+        
+        <!-- Botón cerrar solo móvil -->
+        <button onclick="toggleSidebar()" class="md:hidden absolute top-4 right-4 text-gray-400 hover:text-white">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+
         <div class="p-6 flex flex-col items-center gap-4 border-b border-[#2a2a2a] mt-2">
             
             <!-- LOGO SVG RECREADO DE IL MERCATO -->
-            <svg viewBox="0 0 100 100" class="w-28 h-28 drop-shadow-[0_0_15px_rgba(212,175,55,0.2)]" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 100 100" class="w-24 h-24 md:w-28 md:h-28 drop-shadow-[0_0_15px_rgba(212,175,55,0.2)]" xmlns="http://www.w3.org/2000/svg">
                 <!-- Círculo exterior negro con borde dorado -->
                 <circle cx="50" cy="50" r="48" fill="#111111" stroke="#d4af37" stroke-width="2"/>
                 <!-- Círculo interior blanco/plateado -->
@@ -107,176 +116,186 @@
 
         <div class="p-4 border-t border-[#2a2a2a] bg-[#0a0a0a]">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full border-2 border-brand-500 flex items-center justify-center bg-[#222] text-brand-500">
+                <div class="w-10 h-10 rounded-full border-2 border-brand-500 flex items-center justify-center bg-[#222] text-brand-500 shrink-0">
                     <i class="fa-solid fa-user-tie"></i>
                 </div>
-                <div class="text-sm">
-                    <p class="font-medium text-white">Administración</p>
-                    <p class="text-xs text-brand-500">Il Mercato</p>
+                <div class="text-sm truncate">
+                    <p class="font-medium text-white truncate">Administración</p>
+                    <p class="text-xs text-brand-500 truncate">Il Mercato</p>
                 </div>
             </div>
         </div>
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+    <main class="flex-1 flex flex-col h-screen overflow-hidden w-full">
         <!-- HEADER -->
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10">
-            <div class="relative w-[28rem]">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                <input type="text" placeholder="Buscar por código de barras, PLU o nombre de fiambre/queso..." class="w-full pl-10 pr-4 py-2 bg-slate-100 border-transparent rounded-lg text-sm focus:border-brand-500 focus:bg-white focus:ring-1 focus:ring-brand-500 transition-all outline-none">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm z-10 shrink-0">
+            
+            <div class="flex items-center flex-1">
+                <!-- Hamburguesa para móviles -->
+                <button onclick="toggleSidebar()" class="mr-4 text-slate-600 hover:text-brand-600 md:hidden focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+
+                <div class="relative w-full max-w-md hidden sm:block">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Buscar por código, PLU o nombre..." class="w-full pl-10 pr-4 py-2 bg-slate-100 border-transparent rounded-lg text-sm focus:border-brand-500 focus:bg-white focus:ring-1 focus:ring-brand-500 transition-all outline-none">
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="text-sm text-slate-500 mr-4 font-medium hidden md:block">
-                    <i class="fa-solid fa-location-dot mr-1 text-brand-600"></i> Sucursal: Gdor. Crespo
+
+            <div class="flex items-center gap-2 md:gap-4 ml-auto">
+                <div class="text-sm text-slate-500 mr-2 font-medium hidden lg:block">
+                    <i class="fa-solid fa-location-dot mr-1 text-brand-600"></i> Gdor. Crespo
                 </div>
                 <button class="relative p-2 text-slate-400 hover:text-brand-600 transition-colors">
                     <i class="fa-regular fa-bell text-lg"></i>
                     <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
                 </button>
-                <button class="bg-[#111] text-brand-500 px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#222] transition-colors shadow-md border border-[#333]">
-                    <i class="fa-solid fa-plus mr-2"></i> Nuevo Artículo
+                <button class="bg-[#111] text-brand-500 px-3 py-2 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-bold hover:bg-[#222] transition-colors shadow-md border border-[#333] flex items-center">
+                    <i class="fa-solid fa-plus md:mr-2"></i> <span class="hidden md:inline">Nuevo Artículo</span>
                 </button>
             </div>
         </header>
 
         <!-- AREA SCROLLEABLE -->
-        <div class="flex-1 overflow-auto p-8 bg-slate-50/50">
+        <div class="flex-1 overflow-auto p-4 md:p-8 bg-slate-50/50">
             
             <!-- ========================================== -->
             <!-- PANTALLA 1: COMPARADOR DE PRECIOS          -->
             <!-- ========================================== -->
             <div id="view-comparador" class="tab-content active max-w-7xl mx-auto">
-                <div class="flex justify-between items-end mb-6">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-6 gap-4">
                     <div>
-                        <h2 class="text-2xl font-bold text-[#111]">Comparador de Costos</h2>
-                        <p class="text-slate-500 text-sm mt-1">Monitoreo de listas de proveedores para maximizar rentabilidad.</p>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#111]">Comparador de Costos</h2>
+                        <p class="text-slate-500 text-xs md:text-sm mt-1">Monitoreo de listas de proveedores para maximizar rentabilidad.</p>
                     </div>
-                    <div class="flex gap-2">
-                        <select class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 outline-none shadow-sm">
-                            <option>Todas las categorías</option>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <select class="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 outline-none shadow-sm flex-1 md:flex-none">
+                            <option>Categorías</option>
                             <option>Fiambres</option>
                             <option>Quesos</option>
-                            <option>Almacén y Bebidas</option>
+                            <option>Almacén</option>
                         </select>
-                        <button class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
-                            <i class="fa-solid fa-filter mr-2 text-brand-600"></i> Filtros
+                        <button class="bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm whitespace-nowrap">
+                            <i class="fa-solid fa-filter md:mr-2 text-brand-600"></i> <span class="hidden md:inline">Filtros</span>
                         </button>
                     </div>
+                </div>
+
+                <!-- Búsqueda móvil -->
+                <div class="relative w-full mb-6 sm:hidden">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Buscar producto..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-lg text-sm focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all outline-none shadow-sm">
                 </div>
 
                 <!-- TABLA COMPARATIVA -->
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
+                        <table class="w-full text-sm text-left min-w-[800px]">
                             <thead class="bg-[#fcfcfc] text-slate-600 font-semibold border-b border-slate-200">
                                 <tr>
-                                    <th class="px-6 py-4">Catálogo Il Mercato</th>
-                                    <th class="px-6 py-4">PLU Balanza</th>
-                                    <th class="px-6 py-4 text-center border-l border-slate-200 bg-slate-50">
+                                    <th class="px-4 py-3 md:px-6 md:py-4">Catálogo Il Mercato</th>
+                                    <th class="px-4 py-3 md:px-6 md:py-4">PLU Balanza</th>
+                                    <th class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-200 bg-slate-50 min-w-[140px]">
                                         Dist. Paladini<br><span class="text-[10px] font-normal text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 inline-block">Actualizado: Hoy</span>
                                     </th>
-                                    <th class="px-6 py-4 text-center border-l border-slate-200 bg-slate-50">
+                                    <th class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-200 bg-slate-50 min-w-[140px]">
                                         Lácteos Tregar<br><span class="text-[10px] font-normal text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full mt-1 inline-block">Actualizado: Ayer</span>
                                     </th>
-                                    <th class="px-6 py-4 text-center border-l border-slate-200 bg-slate-50">
+                                    <th class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-200 bg-slate-50 min-w-[140px]">
                                         Mayorista Zonal<br><span class="text-[10px] font-normal text-red-600 bg-red-50 px-2 py-0.5 rounded-full mt-1 inline-block">Hace 15 días</span>
                                     </th>
-                                    <th class="px-6 py-4 border-l border-slate-200 text-center">Acción</th>
+                                    <th class="px-4 py-3 md:px-6 md:py-4 border-l border-slate-200 text-center">Acción</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 <!-- Fila 1 -->
                                 <tr class="hover:bg-brand-50/30 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-slate-900 text-[15px]">Jamón Cocido Natural x Kg</div>
-                                        <div class="text-xs text-brand-600 font-medium mt-0.5">Fiambres Especiales</div>
+                                    <td class="px-4 py-3 md:px-6 md:py-4">
+                                        <div class="font-bold text-slate-900 text-sm md:text-[15px]">Jamón Cocido Natural x Kg</div>
+                                        <div class="text-[11px] md:text-xs text-brand-600 font-medium mt-0.5">Fiambres Especiales</div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono text-xs">PLU: 1045</span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4">
+                                        <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono text-xs whitespace-nowrap">PLU: 1045</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100 bg-emerald-50/40">
-                                        <!-- Semáforo Verde -->
-                                        <span class="text-emerald-700 font-bold flex items-center justify-center gap-1 text-[15px]">
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 bg-emerald-50/40">
+                                        <span class="text-emerald-700 font-bold flex items-center justify-center gap-1 text-sm md:text-[15px]">
                                             <i class="fa-solid fa-caret-down text-xs"></i> $ 7.850,00
                                         </span>
                                         <span class="text-[10px] text-emerald-700 font-bold mt-1 inline-block">Mejor Costo</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100">
-                                        <span class="text-slate-500 flex items-center justify-center gap-1">
-                                            -
-                                        </span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100">
+                                        <span class="text-slate-500 flex items-center justify-center gap-1">-</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100 text-slate-800">
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 text-slate-800 font-medium">
                                         $ 8.100,00
                                     </td>
-                                    <td class="px-6 py-4 border-l border-slate-100 text-center">
-                                        <button class="text-brand-900 hover:text-white font-bold text-xs bg-brand-500 hover:bg-[#111] px-4 py-2 rounded-md transition-all shadow-sm">Actualizar Precio</button>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 border-l border-slate-100 text-center">
+                                        <button class="text-brand-900 hover:text-white font-bold text-[10px] md:text-xs bg-brand-500 hover:bg-[#111] px-3 py-2 rounded-md transition-all shadow-sm whitespace-nowrap">Actualizar</button>
                                     </td>
                                 </tr>
                                 <!-- Fila 2 -->
                                 <tr class="hover:bg-brand-50/30 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-slate-900 text-[15px]">Queso Tybo en Barra x Kg</div>
-                                        <div class="text-xs text-brand-600 font-medium mt-0.5">Quesos y Lácteos</div>
+                                    <td class="px-4 py-3 md:px-6 md:py-4">
+                                        <div class="font-bold text-slate-900 text-sm md:text-[15px]">Queso Tybo en Barra x Kg</div>
+                                        <div class="text-[11px] md:text-xs text-brand-600 font-medium mt-0.5">Quesos y Lácteos</div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono text-xs">PLU: 2012</span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4">
+                                        <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono text-xs whitespace-nowrap">PLU: 2012</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100">
-                                        <span class="text-slate-800">$ 6.500,00</span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 font-medium text-slate-800">
+                                        $ 6.500,00
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100 bg-emerald-50/40">
-                                         <!-- Semáforo Verde -->
-                                         <span class="text-emerald-700 font-bold flex items-center justify-center gap-1 text-[15px]">
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 bg-emerald-50/40">
+                                         <span class="text-emerald-700 font-bold flex items-center justify-center gap-1 text-sm md:text-[15px]">
                                             $ 6.100,00
                                         </span>
                                         <span class="text-[10px] text-emerald-700 font-bold mt-1 inline-block">Mejor Costo</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100">
-                                        <span class="text-red-600 flex items-center justify-center gap-1">
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100">
+                                        <span class="text-red-600 flex items-center justify-center gap-1 font-medium">
                                             <i class="fa-solid fa-caret-up text-xs"></i> $ 6.800,00
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 border-l border-slate-100 text-center">
-                                        <button class="text-brand-900 hover:text-white font-bold text-xs bg-brand-500 hover:bg-[#111] px-4 py-2 rounded-md transition-all shadow-sm">Actualizar Precio</button>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 border-l border-slate-100 text-center">
+                                        <button class="text-brand-900 hover:text-white font-bold text-[10px] md:text-xs bg-brand-500 hover:bg-[#111] px-3 py-2 rounded-md transition-all shadow-sm whitespace-nowrap">Actualizar</button>
                                     </td>
                                 </tr>
                                 <!-- Fila 3 -->
                                 <tr class="hover:bg-brand-50/30 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <div class="font-bold text-slate-900 text-[15px]">Salame Milán Especial</div>
-                                        <div class="text-xs text-brand-600 font-medium mt-0.5">Fiambres Especiales</div>
+                                    <td class="px-4 py-3 md:px-6 md:py-4">
+                                        <div class="font-bold text-slate-900 text-sm md:text-[15px]">Salame Milán Especial</div>
+                                        <div class="text-[11px] md:text-xs text-brand-600 font-medium mt-0.5">Fiambres Especiales</div>
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono text-xs">PLU: 1088</span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4">
+                                        <span class="bg-slate-100 px-2 py-1 rounded text-slate-600 font-mono text-xs whitespace-nowrap">PLU: 1088</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100 bg-emerald-50/40">
-                                        <!-- Semáforo Verde -->
-                                        <span class="text-emerald-700 font-bold flex items-center justify-center gap-1 text-[15px]">
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 bg-emerald-50/40">
+                                        <span class="text-emerald-700 font-bold flex items-center justify-center gap-1 text-sm md:text-[15px]">
                                             $ 9.200,00
                                         </span>
                                         <span class="text-[10px] text-emerald-700 font-bold mt-1 inline-block">Oferta Directa</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100">
-                                        <span class="text-slate-800">$ 9.850,00</span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 font-medium text-slate-800">
+                                        $ 9.850,00
                                     </td>
-                                    <td class="px-6 py-4 text-center border-l border-slate-100">
-                                        <span class="text-slate-800">$ 9.900,00</span>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 text-center border-l border-slate-100 font-medium text-slate-800">
+                                        $ 9.900,00
                                     </td>
-                                    <td class="px-6 py-4 border-l border-slate-100 text-center">
-                                        <button class="text-brand-900 hover:text-white font-bold text-xs bg-brand-500 hover:bg-[#111] px-4 py-2 rounded-md transition-all shadow-sm">Actualizar Precio</button>
+                                    <td class="px-4 py-3 md:px-6 md:py-4 border-l border-slate-100 text-center">
+                                        <button class="text-brand-900 hover:text-white font-bold text-[10px] md:text-xs bg-brand-500 hover:bg-[#111] px-3 py-2 rounded-md transition-all shadow-sm whitespace-nowrap">Actualizar</button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <!-- Paginación -->
-                    <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between">
-                        <span class="text-sm text-slate-500">Mostrando 1 a 3 de 850 productos activos</span>
-                        <div class="flex gap-1">
-                            <button class="px-3 py-1 border border-slate-300 rounded text-slate-600 text-sm bg-white hover:bg-slate-50 font-medium">Anterior</button>
-                            <button class="px-3 py-1 border border-slate-300 rounded text-slate-600 text-sm bg-white hover:bg-slate-50 font-medium">Siguiente</button>
+                    <div class="bg-slate-50 px-4 md:px-6 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <span class="text-xs md:text-sm text-slate-500 text-center sm:text-left">Mostrando 1 a 3 de 850 productos</span>
+                        <div class="flex gap-1 w-full sm:w-auto">
+                            <button class="flex-1 sm:flex-none px-3 py-2 border border-slate-300 rounded text-slate-600 text-sm bg-white hover:bg-slate-50 font-medium">Anterior</button>
+                            <button class="flex-1 sm:flex-none px-3 py-2 border border-slate-300 rounded text-slate-600 text-sm bg-white hover:bg-slate-50 font-medium">Siguiente</button>
                         </div>
                     </div>
                 </div>
@@ -287,23 +306,23 @@
             <!-- ========================================== -->
             <div id="view-importador" class="tab-content max-w-5xl mx-auto">
                 <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-[#111]">Gestión de Balanzas NX e Importación</h2>
-                    <p class="text-slate-500 text-sm mt-1">Sube listas Excel de proveedores o genera archivos TXT para actualizar tus balanzas Systel.</p>
+                    <h2 class="text-xl md:text-2xl font-bold text-[#111]">Gestión de Balanzas NX e Importación</h2>
+                    <p class="text-slate-500 text-xs md:text-sm mt-1">Sube listas Excel de proveedores o genera archivos TXT para actualizar tus balanzas Systel.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                     <!-- Columna Izquierda: Importador -->
-                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+                    <div class="bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-brand-600"></div>
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 border border-brand-100">
+                            <div class="w-10 h-10 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 border border-brand-100 shrink-0">
                                 <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
                             </div>
-                            <h3 class="text-lg font-bold text-[#111]">Importar Lista de Costos</h3>
+                            <h3 class="text-base md:text-lg font-bold text-[#111]">Importar Lista de Costos</h3>
                         </div>
                         
                         <div class="mb-4">
-                            <label class="block text-sm font-bold text-slate-700 mb-2">Seleccionar Proveedor</label>
+                            <label class="block text-xs md:text-sm font-bold text-slate-700 mb-2">Seleccionar Proveedor</label>
                             <select class="w-full bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-3 outline-none transition-all">
                                 <option>Distribuidora Paladini</option>
                                 <option>Lácteos Tregar</option>
@@ -312,87 +331,80 @@
                         </div>
 
                         <!-- Drag and drop zone -->
-                        <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-brand-50 hover:border-brand-500 transition-all cursor-pointer group">
-                            <i class="fa-solid fa-file-excel text-4xl text-slate-300 group-hover:text-brand-500 transition-colors mb-3"></i>
-                            <p class="text-sm font-bold text-slate-700">Arrastra el archivo Excel aquí</p>
-                            <p class="text-xs text-slate-500 mt-1">Soporta .xlsx, .xls, .csv</p>
-                            <button class="mt-4 bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors shadow-sm">
+                        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 md:p-8 text-center hover:bg-brand-50 hover:border-brand-500 transition-all cursor-pointer group">
+                            <i class="fa-solid fa-file-excel text-3xl md:text-4xl text-slate-300 group-hover:text-brand-500 transition-colors mb-3"></i>
+                            <p class="text-xs md:text-sm font-bold text-slate-700">Arrastra el archivo Excel aquí</p>
+                            <p class="text-[10px] md:text-xs text-slate-500 mt-1">Soporta .xlsx, .xls, .csv</p>
+                            <button class="mt-4 bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors shadow-sm w-full md:w-auto">
                                 Explorar archivos
                             </button>
                         </div>
 
                         <div class="mt-6 border-t border-slate-100 pt-4">
-                            <h4 class="text-xs font-bold uppercase text-slate-500 mb-3 tracking-wider">Últimas importaciones</h4>
-                            <div class="flex items-center justify-between text-sm mb-2 p-2 bg-slate-50 rounded">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-check-circle text-emerald-500"></i>
-                                    <span class="text-slate-700 font-medium">lista_paladini_marzo.xlsx</span>
+                            <h4 class="text-[10px] md:text-xs font-bold uppercase text-slate-500 mb-3 tracking-wider">Últimas importaciones</h4>
+                            <div class="flex items-center justify-between text-xs md:text-sm mb-2 p-2 bg-slate-50 rounded">
+                                <div class="flex items-center gap-2 overflow-hidden pr-2">
+                                    <i class="fa-solid fa-check-circle text-emerald-500 shrink-0"></i>
+                                    <span class="text-slate-700 font-medium truncate">lista_paladini.xlsx</span>
                                 </div>
-                                <span class="text-slate-400 text-xs">Hace 2 horas</span>
-                            </div>
-                            <div class="flex items-center justify-between text-sm p-2 bg-slate-50 rounded">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-check-circle text-emerald-500"></i>
-                                    <span class="text-slate-700 font-medium">precios_tregar_v2.csv</span>
-                                </div>
-                                <span class="text-slate-400 text-xs">Ayer</span>
+                                <span class="text-slate-400 text-[10px] shrink-0">Hace 2 hs</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Columna Derecha: Exportador a Balanzas -->
-                    <div class="bg-[#111] text-white p-6 rounded-xl border border-[#333] shadow-xl relative overflow-hidden">
+                    <div class="bg-[#111] text-white p-5 md:p-6 rounded-xl border border-[#333] shadow-xl relative overflow-hidden">
                         <!-- Decoración de fondo -->
-                        <i class="fa-solid fa-weight-scale absolute -bottom-10 -right-10 text-[150px] text-brand-500 opacity-5 z-0"></i>
+                        <i class="fa-solid fa-weight-scale absolute -bottom-10 -right-10 text-[120px] md:text-[150px] text-brand-500 opacity-5 z-0 pointer-events-none"></i>
                         
                         <div class="relative z-10">
                             <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-[#111] shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+                                <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-[#111] shadow-[0_0_15px_rgba(212,175,55,0.4)] shrink-0">
                                     <i class="fa-solid fa-print text-lg"></i>
                                 </div>
-                                <h3 class="text-lg font-bold text-white">Actualizar Balanzas NX</h3>
+                                <h3 class="text-base md:text-lg font-bold text-white">Actualizar Balanzas NX</h3>
                             </div>
                             
-                            <p class="text-sm text-gray-400 mb-6">Genera el archivo plano (.txt) con los precios de venta al público actualizados, listo para el software Systel.</p>
+                            <p class="text-xs md:text-sm text-gray-400 mb-6">Genera el archivo plano (.txt) con los precios de venta actualizados para Systel.</p>
 
-                            <div class="space-y-4 mb-8">
+                            <div class="space-y-3 mb-6">
                                 <div class="flex items-center gap-3 bg-[#222] p-3 rounded-lg border border-[#333]">
-                                    <input type="radio" name="export_format" checked class="w-4 h-4 text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500">
-                                    <label class="text-sm font-medium text-white">Formato Systel NX Estándar (.txt)</label>
+                                    <input type="radio" name="export_format" checked class="w-4 h-4 text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500 shrink-0">
+                                    <label class="text-xs md:text-sm font-medium text-white leading-tight">Formato Systel NX Estándar (.txt)</label>
                                 </div>
                                 <div class="flex items-center gap-3 bg-[#222] p-3 rounded-lg border border-[#333]">
-                                    <input type="radio" name="export_format" class="w-4 h-4 text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500">
-                                    <label class="text-sm font-medium text-gray-300">Formato Genérico CSV (Separado por comas)</label>
+                                    <input type="radio" name="export_format" class="w-4 h-4 text-brand-500 bg-slate-800 border-slate-600 focus:ring-brand-500 shrink-0">
+                                    <label class="text-xs md:text-sm font-medium text-gray-300 leading-tight">Formato Genérico CSV</label>
                                 </div>
                             </div>
 
-                            <div class="bg-[#222] rounded-lg p-4 border border-[#333] mb-6">
+                            <div class="bg-[#222] rounded-lg p-3 md:p-4 border border-[#333] mb-6">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold text-brand-500 uppercase tracking-wider">Resumen de Exportación</span>
-                                    <span class="bg-brand-500 text-[#111] text-xs px-2 py-0.5 rounded font-bold">120 Artículos</span>
+                                    <span class="text-[10px] md:text-xs font-bold text-brand-500 uppercase tracking-wider">Resumen</span>
+                                    <span class="bg-brand-500 text-[#111] text-[10px] md:text-xs px-2 py-0.5 rounded font-bold">120 Artículos</span>
                                 </div>
-                                <p class="text-xs text-gray-400 leading-relaxed">Se exportarán todos los productos de las categorías "Fiambres" y "Quesos" que posean un código PLU asignado y precio de venta actualizado.</p>
+                                <p class="text-[10px] md:text-xs text-gray-400 leading-relaxed">Se exportarán productos con PLU asignado y precio actualizado.</p>
                             </div>
 
-                            <button class="w-full bg-brand-500 hover:bg-brand-600 text-[#111] font-bold py-3.5 px-4 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+                            <button class="w-full bg-brand-500 hover:bg-brand-600 text-[#111] font-bold py-3 px-4 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all flex items-center justify-center gap-2 text-sm md:text-base">
                                 <i class="fa-solid fa-download text-lg"></i>
-                                Descargar Archivo para Balanza
+                                Descargar Archivo Balanza
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Exportar Reportes -->
-                <div class="mt-8 bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div class="mt-6 md:mt-8 bg-white p-5 md:p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h4 class="font-bold text-[#111] text-lg">Lista de Precios al Público</h4>
-                        <p class="text-sm text-slate-500 mt-1">Descarga el catálogo completo para impresión física en el mostrador o uso contable.</p>
+                        <h4 class="font-bold text-[#111] text-base md:text-lg">Lista de Precios al Público</h4>
+                        <p class="text-xs md:text-sm text-slate-500 mt-1">Descarga el catálogo completo para impresión física.</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button class="bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto">
+                        <button class="flex-1 sm:flex-none justify-center bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
                             <i class="fa-solid fa-file-pdf text-lg"></i> Generar PDF
                         </button>
-                        <button class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-5 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
+                        <button class="flex-1 sm:flex-none justify-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-4 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center gap-2">
                             <i class="fa-solid fa-file-excel text-lg"></i> Exportar Excel
                         </button>
                     </div>
@@ -400,64 +412,53 @@
             </div>
 
             <!-- ========================================== -->
-            <!-- PANTALLA 3: CATÁLOGO MAESTRO (Placeholder) -->
+            <!-- PANTALLA 3, 4 y 5: PLACEHOLDERS            -->
             <!-- ========================================== -->
             <div id="view-catalogo" class="tab-content max-w-5xl mx-auto">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-[#111]">Catálogo Maestro</h2>
-                    <p class="text-slate-500 text-sm mt-1">Gestión centralizada de todos los artículos del local.</p>
                 </div>
-                <div class="bg-white p-12 rounded-xl border border-slate-200 shadow-sm text-center">
-                    <div class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa-solid fa-person-digging text-4xl text-brand-500"></i>
+                <div class="bg-white p-8 md:p-12 rounded-xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-person-digging text-3xl md:text-4xl text-brand-500"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800">Módulo en Construcción (Fase 1)</h3>
-                    <p class="text-slate-500 mt-2 max-w-md mx-auto">Aquí se podrá realizar el alta, baja y modificación manual de los productos, asignar PLUs, configurar rentabilidades deseadas y organizar las categorías del negocio.</p>
-                    <button class="mt-6 bg-[#111] text-brand-500 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-[#222] transition-colors shadow-md">
-                        Volver al Comparador
-                    </button>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800">Módulo en Construcción (Fase 1)</h3>
+                    <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">Aquí se podrá realizar el alta, baja y modificación manual de los productos.</p>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- PANTALLA 4: BASE PROVEEDORES (Placeholder) -->
-            <!-- ========================================== -->
             <div id="view-proveedores" class="tab-content max-w-5xl mx-auto">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-[#111]">Base de Proveedores</h2>
-                    <p class="text-slate-500 text-sm mt-1">Directorio y condiciones comerciales.</p>
                 </div>
-                <div class="bg-white p-12 rounded-xl border border-slate-200 shadow-sm text-center">
-                    <div class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa-solid fa-address-book text-4xl text-brand-500"></i>
+                <div class="bg-white p-8 md:p-12 rounded-xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-address-book text-3xl md:text-4xl text-brand-500"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800">Módulo en Construcción (Fase 1)</h3>
-                    <p class="text-slate-500 mt-2 max-w-md mx-auto">En este panel se administrará la base de datos de los proveedores, días de visita, contactos comerciales y configuración del formato de Excel que envía cada uno.</p>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800">Módulo en Construcción (Fase 1)</h3>
+                    <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">Directorio comercial y configuración del formato de Excel que envía cada uno.</p>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- PANTALLA 5: CONFIGURACIÓN (Placeholder)    -->
-            <!-- ========================================== -->
             <div id="view-configuracion" class="tab-content max-w-5xl mx-auto">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-[#111]">Configuración del Sistema</h2>
-                    <p class="text-slate-500 text-sm mt-1">Ajustes generales y preferencias.</p>
                 </div>
-                <div class="bg-white p-12 rounded-xl border border-slate-200 shadow-sm text-center">
-                    <div class="w-20 h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fa-solid fa-sliders text-4xl text-brand-500"></i>
+                <div class="bg-white p-8 md:p-12 rounded-xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa-solid fa-sliders text-3xl md:text-4xl text-brand-500"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800">Módulo en Construcción (Fase 1)</h3>
-                    <p class="text-slate-500 mt-2 max-w-md mx-auto">Sección reservada para configurar los parámetros del sistema, usuarios, permisos, y preferencias de exportación para los diferentes modelos de balanzas.</p>
+                    <h3 class="text-lg md:text-xl font-bold text-slate-800">Módulo en Construcción (Fase 1)</h3>
+                    <p class="text-sm text-slate-500 mt-2 max-w-md mx-auto">Ajustes generales, usuarios y parámetros del sistema.</p>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- Script de lógica de UI actualizado -->
+    <!-- Script de lógica de UI Responsive -->
     <script>
+        // Función para cambiar de pestañas
         function switchTab(tabId) {
             // Ocultar todas las vistas
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -465,7 +466,7 @@
             // Array con todos los IDs de los botones del menú lateral
             const allBtns = ['btn-comparador', 'btn-importador', 'btn-catalogo', 'btn-proveedores', 'btn-configuracion'];
             
-            // Resetear estilos de todos los botones a su estado inactivo
+            // Resetear estilos de todos los botones
             allBtns.forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) {
@@ -479,10 +480,36 @@
                 selectedView.classList.add('active');
             }
             
-            // Estilizar botón activo con el tema dorado de Il Mercato
+            // Estilizar botón activo
             const activeBtn = document.getElementById('btn-' + tabId);
             if (activeBtn) {
                 activeBtn.className = "w-full flex items-center gap-3 px-4 py-3 bg-brand-500 text-[#111] rounded-lg transition-colors font-bold text-sm shadow-[0_0_10px_rgba(212,175,55,0.3)] text-left";
+            }
+
+            // En móviles, cerrar el menú lateral después de hacer clic en una opción
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleSidebar();
+                }
+            }
+        }
+
+        // Función para abrir/cerrar menú en móviles
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                // Abrir menú
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                setTimeout(() => backdrop.classList.add('opacity-100'), 10);
+            } else {
+                // Cerrar menú
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.remove('opacity-100');
+                setTimeout(() => backdrop.classList.add('hidden'), 300); // Esperar a que termine la animación
             }
         }
     </script>
